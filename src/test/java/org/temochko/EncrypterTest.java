@@ -9,6 +9,7 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import javax.crypto.ShortBufferException;
+import java.nio.ByteBuffer;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
@@ -41,5 +42,38 @@ class EncrypterTest {
         } catch (Exception e) {
             throw new TestAbortedException(e.getMessage());
         }
+    }
+
+    @Test
+    void shouldConstructValidPacket() throws Exception {
+        Message original = new Message((byte) 0x20, 128L, 4, 67, "hello world");
+        byte[] encryptedPacket = SUT.encrypt(original);
+
+        ByteBuffer buffer = ByteBuffer.wrap(encryptedPacket);
+
+        // magic byte
+        org.assertj.core.api.Assertions.assertThat(buffer.get()).isEqualTo((byte) 0x13);
+        // unique id
+        org.assertj.core.api.Assertions.assertThat(buffer.get()).isEqualTo((byte) 0x20);
+        // message num
+        org.assertj.core.api.Assertions.assertThat(buffer.getLong()).isEqualTo(128L);
+
+        int wlen = buffer.getInt();
+        org.assertj.core.api.Assertions.assertThat(wlen).isGreaterThan(8);
+
+        buffer.getShort();
+
+        org.assertj.core.api.Assertions.assertThat(buffer.getInt()).isEqualTo(4);
+        org.assertj.core.api.Assertions.assertThat(buffer.getInt()).isEqualTo(67);
+    }
+
+    @Test
+    void shouldHandleBigMessageText() throws Exception {
+        String largeText = "hello".repeat(50000);
+        Message original = new Message((byte) 0x05, 50L, 2, 3, largeText);
+
+        byte[] encryptedPacket = SUT.encrypt(original);
+
+        org.assertj.core.api.Assertions.assertThat(encryptedPacket.length).isGreaterThan(10000);
     }
 }
