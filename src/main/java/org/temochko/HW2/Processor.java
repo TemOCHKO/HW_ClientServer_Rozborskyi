@@ -8,13 +8,14 @@ import java.util.concurrent.BlockingQueue;
 public class Processor implements Runnable {
     private final BlockingQueue<Message> decryptedMessageQueue;
     private final BlockingQueue<Message> responseMessageQueue;
-    private HashMap<Integer, Integer> storage = new HashMap<>();
+    private Storage storage;
 
     private volatile boolean isRunning = true;
 
-    public Processor(BlockingQueue<Message> decryptedMessageQueue, BlockingQueue<Message> responseMessageQueue) {
+    public Processor(BlockingQueue<Message> decryptedMessageQueue, BlockingQueue<Message> responseMessageQueue, Storage storage) {
         this.decryptedMessageQueue = decryptedMessageQueue;
         this.responseMessageQueue = responseMessageQueue;
+        this.storage = storage;
     }
 
     public void stop() {
@@ -22,13 +23,13 @@ public class Processor implements Runnable {
     }
     @Override
     public void run() {
-        while (isRunning) {
+        while (isRunning && !Thread.currentThread().isInterrupted()) {
             try {
                 Message decryptedMessage = decryptedMessageQueue.take();
 
                 processMessage(decryptedMessage);
             } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+                Thread.currentThread().interrupt();
             }
         }
     }
@@ -47,7 +48,7 @@ public class Processor implements Runnable {
                     case 1:
                         if (messageParts.length > 1) {
                             int prodCount = Integer.parseInt(messageParts[1]);
-                            storage.put(idProd, prodCount);
+                            storage.addStock(idProd, prodCount);
                             response = "Added successfully";
                         } else {
                             response = "There was an error processing the command";
@@ -56,21 +57,20 @@ public class Processor implements Runnable {
                     case 2:
                         if (messageParts.length > 1) {
                             int prodCount = Integer.parseInt(messageParts[1]);
-                            var prodCountInStorage = storage.get(idProd);
+                            var prodCountInStorage = storage.getStock(idProd);
 
                             if (prodCountInStorage - prodCount < 0) {
                                 response = "There was an error. Cannot remove this much product";
                                 break;
                             }
-                            storage.remove(idProd);
-                            storage.put(idProd, prodCountInStorage - prodCount);
+                            storage.removeStock(idProd, prodCount);
                             response = "Removed successfully";
                             break;
                         }
                     case 3:
-                        int countOfProduct = storage.get(idProd);
+                        int countOfProduct = storage.getStock(idProd);
                         if (countOfProduct > 0) {
-                            response = "The count of the product is " + countOfProduct;
+                            response = "Stock " + countOfProduct;
                             break;
                         } else {
                             response = "There was an error";
@@ -87,9 +87,9 @@ public class Processor implements Runnable {
                     message.getCommandId(), message.getUserId(), response
             );
 
-            responseMessageQueue.put(message);
+            responseMessageQueue.put(responseMessage);
         } catch (InterruptedException e) {
-            throw new RuntimeException(e);
+            Thread.currentThread().interrupt();
         }
     }
 }
