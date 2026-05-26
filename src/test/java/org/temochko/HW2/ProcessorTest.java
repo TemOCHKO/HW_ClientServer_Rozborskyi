@@ -37,7 +37,6 @@ public class ProcessorTest {
 
     @AfterEach
     public void end() {
-        // Зупиняємо всі процесори після кожного тесту
         for (Processor p : processors) {
             p.stop();
         }
@@ -76,7 +75,6 @@ public class ProcessorTest {
 
         // Ready set go
         startAtTheSameTimeLatch.countDown();
-
         eachThreadDoneLatch.await(5, TimeUnit.SECONDS);
 
         // dont continue before everyone has done
@@ -85,14 +83,12 @@ public class ProcessorTest {
         }
 
         Thread.sleep(100);
-
         executorService.awaitTermination(5, TimeUnit.SECONDS);
 
         int expectedTotal = numberOfThreads * amountToAddPerThread;
         int actualTotal = storage.getStock(targetProductId);
 
         assertEquals(expectedTotal, actualTotal);
-
         executorService.shutdown();
     }
 
@@ -168,7 +164,6 @@ public class ProcessorTest {
         }
 
         Thread.sleep(100);
-
         assertEquals(80, outputQueue.size());
 
         int correctResponses = 0;
@@ -179,7 +174,6 @@ public class ProcessorTest {
             }
         }
         assertEquals(80, correctResponses);
-
         executor.shutdown();
     }
 }
