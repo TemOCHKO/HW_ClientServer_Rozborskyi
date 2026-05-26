@@ -2,11 +2,13 @@ package org.temochko.HW2;
 
 import org.temochko.HW1.Message;
 
+import java.util.HashMap;
 import java.util.concurrent.BlockingQueue;
 
 public class Processor implements Runnable {
     private final BlockingQueue<Message> decryptedMessageQueue;
     private final BlockingQueue<Message> responseMessageQueue;
+    private HashMap<Integer, Integer> storage = new HashMap<>();
 
     private volatile boolean isRunning = true;
 
@@ -33,9 +35,56 @@ public class Processor implements Runnable {
 
     private void processMessage(Message message) {
         try {
+            int commandId = message.getCommandId();
+            String messageString = message.getMessageString();
+            String response = "";
+
+            try {
+                String[] messageParts = messageString.split("/");
+                int idProd = Integer.parseInt(messageParts[0]);
+
+                switch (commandId) {
+                    case 1:
+                        if (messageParts.length > 1) {
+                            int prodCount = Integer.parseInt(messageParts[1]);
+                            storage.put(idProd, prodCount);
+                            response = "Added successfully";
+                        } else {
+                            response = "There was an error processing the command";
+                        }
+                        break;
+                    case 2:
+                        if (messageParts.length > 1) {
+                            int prodCount = Integer.parseInt(messageParts[1]);
+                            var prodCountInStorage = storage.get(idProd);
+
+                            if (prodCountInStorage - prodCount < 0) {
+                                response = "There was an error. Cannot remove this much product";
+                                break;
+                            }
+                            storage.remove(idProd);
+                            storage.put(idProd, prodCountInStorage - prodCount);
+                            response = "Removed successfully";
+                            break;
+                        }
+                    case 3:
+                        int countOfProduct = storage.get(idProd);
+                        if (countOfProduct > 0) {
+                            response = "The count of the product is " + countOfProduct;
+                            break;
+                        } else {
+                            response = "There was an error";
+                        }
+                    default:
+                        break;
+                }
+            } catch (NumberFormatException e) {
+                System.err.println(e.getMessage());
+            }
+
             Message responseMessage = new Message(
                     message.getUniqueIdentifier(), message.getMessageNumber(),
-                    message.getCommandId(), message.getUserId(), "Ok"
+                    message.getCommandId(), message.getUserId(), response
             );
 
             responseMessageQueue.put(message);
