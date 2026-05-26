@@ -81,7 +81,6 @@ public class ProcessorTest {
         while (outputQueue.size() < numberOfThreads) {
             Thread.sleep(50);
         }
-
         Thread.sleep(100);
         executorService.awaitTermination(5, TimeUnit.SECONDS);
 
