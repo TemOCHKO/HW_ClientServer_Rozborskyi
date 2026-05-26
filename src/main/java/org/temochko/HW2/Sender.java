@@ -1,4 +1,4 @@
-package org.temochko;
+package org.temochko.HW2;
 
 import java.util.concurrent.BlockingQueue;
 

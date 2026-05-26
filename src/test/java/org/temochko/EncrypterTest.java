@@ -4,6 +4,8 @@ import org.apache.commons.codec.binary.Hex;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.opentest4j.TestAbortedException;
+import org.temochko.HW1.Encrypter;
+import org.temochko.HW1.Message;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;

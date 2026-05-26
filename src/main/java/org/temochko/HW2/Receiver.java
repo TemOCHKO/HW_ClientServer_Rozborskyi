@@ -1,4 +1,7 @@
-package org.temochko;
+package org.temochko.HW2;
+
+import org.temochko.HW1.Encrypter;
+import org.temochko.HW1.Message;
 
 import java.util.Random;
 import java.util.concurrent.BlockingQueue;
