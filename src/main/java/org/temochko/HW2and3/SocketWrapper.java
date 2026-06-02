@@ -59,7 +59,6 @@ public class SocketWrapper {
         try {
             if (socket != null && !socket.isClosed()) socket.close();
         } catch (IOException e) {
-            // Ignore
         }
     }
 }

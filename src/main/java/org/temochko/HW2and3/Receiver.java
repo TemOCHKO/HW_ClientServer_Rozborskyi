@@ -37,7 +37,6 @@ public class Receiver implements Runnable {
             activeClients.put(userId, this);
             System.out.println("User " + userId + " authenticated. Receiver is listening.");
 
-            // 2. THE MESSAGE LOOP
             while (isRunning && !Thread.currentThread().isInterrupted()) {
                 receiveMessage();
             }
