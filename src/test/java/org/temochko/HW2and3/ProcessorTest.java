@@ -1,4 +1,4 @@
-package org.temochko.HW2;
+package org.temochko.HW2and3;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

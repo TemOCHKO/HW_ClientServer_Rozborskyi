@@ -1,8 +1,7 @@
-package org.temochko.HW2;
+package org.temochko.HW2and3;
 
 import org.temochko.HW1.Message;
 
-import java.util.HashMap;
 import java.util.concurrent.BlockingQueue;
 
 public class Processor implements Runnable {
@@ -49,7 +48,7 @@ public class Processor implements Runnable {
                         if (messageParts.length > 1) {
                             int prodCount = Integer.parseInt(messageParts[1]);
                             storage.addStock(idProd, prodCount);
-                            response = "Added successfully";
+                            response = "Added prod successfully";
                         } else {
                             response = "There was an error processing the command";
                         }

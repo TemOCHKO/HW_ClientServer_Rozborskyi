@@ -1,6 +1,5 @@
-package org.temochko.HW2;
+package org.temochko.HW2and3;
 
-import java.util.HashMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -10,6 +9,7 @@ public class Storage {
 
     public Storage() {
         storage = new ConcurrentHashMap<>();
+        addStock(2, 500);
     }
 
     public int getStock(int id) {
