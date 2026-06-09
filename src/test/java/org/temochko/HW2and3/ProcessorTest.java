@@ -7,7 +7,7 @@ import org.temochko.Message;
 import org.temochko.Models.ProductCriteria;
 import org.temochko.Processor;
 import org.temochko.Repositories.IProductRepository;
-import org.temochko.Repositories.MySqlProductRepository;
+import org.temochko.Repositories.SqlLiteProductRepository;
 import org.temochko.Services.IProductService;
 import org.temochko.Services.ProductService;
 
@@ -18,7 +18,7 @@ import java.util.concurrent.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ProcessorTest {
-    private final IProductRepository productRepository = new MySqlProductRepository("jdbc:mysql://localhost:3306/my_db", "root", "root");
+    private final IProductRepository productRepository = new SqlLiteProductRepository("products.db");
     private IProductService service;
     private BlockingQueue<Message> inputQueue;
     private BlockingQueue<Message> outputQueue;

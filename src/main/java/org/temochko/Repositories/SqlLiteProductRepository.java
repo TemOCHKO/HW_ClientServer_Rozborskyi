@@ -8,19 +8,18 @@ import org.temochko.Models.ProductCriteria;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class MySqlProductRepository implements IProductRepository {
+public class SqlLiteProductRepository implements IProductRepository {
 
     private Connection connection;
 
-    public MySqlProductRepository(String dbUrl, String username, String password) {
+    public SqlLiteProductRepository(String dbName) {
         try {
-            this.connection = DriverManager.getConnection(dbUrl, username, password);
+            this.connection = DriverManager.getConnection("jdbc:sqlite:" + dbName);
         } catch (SQLException e) {
-            throw new RuntimeException("Can't connect to database: " + e.getMessage());
+            throw new RuntimeException("Can't create SQLite DB", e);
         }
 
         init();
@@ -67,9 +66,9 @@ public class MySqlProductRepository implements IProductRepository {
         StringBuilder sb = new StringBuilder("select * from product");
         ArrayList<Object> params = new ArrayList<>();
 
-        String filterPart = Stream.of(stringEquals("product_name", criteria.getName(), params),
-                        stringEquals("price", criteria.getPrice() + "", params),
-                        stringEquals("faculty", criteria.getQuantity() + "", params))
+        String filterPart = Stream.of(columnEquals("product_name", criteria.getName(), params),
+                        columnEquals("price", criteria.getPrice(), params),
+                        columnEquals("quantity", criteria.getQuantity(), params))
 
                 .filter(s -> s != null)
                 .collect(Collectors.joining(" and "));
@@ -77,9 +76,6 @@ public class MySqlProductRepository implements IProductRepository {
         if (!filterPart.isEmpty()) {
             sb.append(" where ").append(filterPart);
         }
-
-        System.out.println(sb.toString());
-        System.out.println(params);
 
         try (PreparedStatement ps = connection.prepareStatement(sb.toString())) {
             for (int i = 0; i < params.size(); i++) {
@@ -154,7 +150,7 @@ public class MySqlProductRepository implements IProductRepository {
         try (Statement statement = connection.createStatement()) {
             statement.execute("""
                 CREATE TABLE IF NOT EXISTS product (
-                    id INTEGER PRIMARY KEY AUTO_INCREMENT,
+                    id INTEGER PRIMARY KEY AUTOINCREMENT,
                     product_name VARCHAR(30) not null,
                     price double(10, 2) not null,
                     quantity int(11) not null
@@ -165,7 +161,7 @@ public class MySqlProductRepository implements IProductRepository {
         }
     }
 
-    private static String stringEquals(String columnName, String value, List<Object> params) {
+    private static <T> String columnEquals(String columnName, T value, List<Object> params) {
         if (value == null) {
             return null;
         }

@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.temochko.DTOs.ProductCreateDto;
 import org.temochko.Models.Product;
 import org.temochko.Models.ProductCriteria;
-import org.temochko.Repositories.MySqlProductRepository;
+import org.temochko.Repositories.SqlLiteProductRepository;
 import org.temochko.Services.ProductService;
 
 import java.util.List;
@@ -15,14 +15,12 @@ import static org.junit.jupiter.api.Assertions.*;
 public class ProductServiceIntegrationTest {
 
     private ProductService productService;
-    private MySqlProductRepository realRepository;
-    private static final String DB_URL = "jdbc:mysql://localhost:3306/my_db";
-    private static final String DB_USER = "root";
-    private static final String DB_PASSWORD = "root";
+    private SqlLiteProductRepository realRepository;
+    private static final String DB_URL = "products.db";
 
     @BeforeEach
     void setUp() {
-        realRepository = new MySqlProductRepository(DB_URL, DB_USER, DB_PASSWORD);
+        realRepository = new SqlLiteProductRepository(DB_URL);
         productService = new ProductService(realRepository);
         productService.deleteAllProducts();
     }

@@ -2,7 +2,7 @@ package org.temochko.Network;
 
 import org.temochko.*;
 import org.temochko.Repositories.IProductRepository;
-import org.temochko.Repositories.MySqlProductRepository;
+import org.temochko.Repositories.SqlLiteProductRepository;
 import org.temochko.Services.IProductService;
 import org.temochko.Services.ProductService;
 
@@ -23,7 +23,7 @@ public class StoreServerTCP {
     // id to connection
     private final ConcurrentHashMap<Integer, Receiver> activeClients = new ConcurrentHashMap<>();
 
-    private final IProductRepository productRepository = new MySqlProductRepository("jdbc:mysql://localhost:3306/my_db", "root", "root");
+    private final IProductRepository productRepository = new SqlLiteProductRepository("products.db");
     private final IProductService service = new ProductService(productRepository);
 
     public void start() {
