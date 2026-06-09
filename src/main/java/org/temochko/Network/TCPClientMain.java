@@ -5,7 +5,6 @@ import org.temochko.Message;
 import java.util.Random;
 
 public class TCPClientMain {
-    private
 
     public static void main(String[] args) {
         int numberOfSimulatedUsers = 15;

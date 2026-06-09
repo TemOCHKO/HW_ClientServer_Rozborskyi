@@ -40,7 +40,7 @@ public class ProductService implements IProductService {
     }
 
     @Override
-    public Optional<Product> getProductById(int id) {
+    public Product getProductById(int id) {
         return productRepository.getById(id);
     }
 
@@ -56,6 +56,35 @@ public class ProductService implements IProductService {
 
     @Override
     public boolean updateProduct(ProductUpdateDto product) {
+        var errors = Validator.validate(product);
+        if (!errors.isEmpty()) {
+            StringBuilder sb = new StringBuilder();
+            for (var error : errors)
+                sb.append(error.errorMessage()).append("\n");
+            throw new InvalidParameterException(sb.toString());
+        }
         return productRepository.update(product);
+    }
+
+    @Override
+    public boolean addStock(int idProd, int stock) {
+        var prod = productRepository.getById(idProd);
+        if (prod == null) {
+            return false;
+        }
+
+        return productRepository.update(new ProductUpdateDto(idProd, prod.getName(), prod.getPrice(), prod.getQuantity() + stock));
+    }
+
+    @Override
+    public boolean deleteStock(int idProd, int stock) {
+        var prod = productRepository.getById(idProd);
+        if (prod == null)
+            return false;
+
+        if (prod.getQuantity() - stock < 0)
+            return false;
+
+        return productRepository.update(new ProductUpdateDto(idProd, prod.getName(), prod.getPrice(), prod.getQuantity() + stock));
     }
 }

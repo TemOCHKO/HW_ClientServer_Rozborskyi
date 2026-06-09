@@ -10,14 +10,12 @@ import java.util.Optional;
 
 public interface IProductService {
     int createProduct(ProductCreateDto product);
-
     int getCountOfProducts();
-
     List<Product> getAllProducts(ProductCriteria criteria);
-
-    Optional<Product> getProductById(int id);
-
+    Product getProductById(int id);
     int deleteAllProducts();
     boolean deleteProductById(int id);
     boolean updateProduct(ProductUpdateDto product);
+    boolean addStock(int idProd, int stock);
+    boolean deleteStock(int idProd, int stock);
 }

@@ -7,8 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Validator {
-    public record ValidationError(String errorMessage, String memberName) {
-    }
+    public record ValidationError(String errorMessage, String memberName) {}
 
     public static List<ValidationError> validate(ProductCreateDto product) {
         var errors = new ArrayList<ValidationError>();

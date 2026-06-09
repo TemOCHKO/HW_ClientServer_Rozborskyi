@@ -1,6 +1,10 @@
 package org.temochko.Network;
 
 import org.temochko.*;
+import org.temochko.Repositories.IProductRepository;
+import org.temochko.Repositories.MySqlProductRepository;
+import org.temochko.Services.IProductService;
+import org.temochko.Services.ProductService;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -19,11 +23,12 @@ public class StoreServerTCP {
     // id to connection
     private final ConcurrentHashMap<Integer, Receiver> activeClients = new ConcurrentHashMap<>();
 
-    private final Storage storage = new Storage();
+    private final IProductRepository productRepository = new MySqlProductRepository("jdbc:mysql://localhost:3306/my_db", "root", "root");
+    private final IProductService service = new ProductService(productRepository);
 
     public void start() {
         new Thread(new Decriptor(encryptedQueue, decryptedQueue), "DecriptorThread").start();
-        new Thread(new Processor(decryptedQueue, responseQueue, storage), "ProcessorThread").start();
+        new Thread(new Processor(decryptedQueue, responseQueue, service), "ProcessorThread").start();
 
         new Thread(new Sender(responseQueue, activeClients), "RouterThread").start();
 

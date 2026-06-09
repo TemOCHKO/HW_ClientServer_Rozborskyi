@@ -10,13 +10,9 @@ import java.util.Optional;
 
 public interface IProductRepository {
     int insert(ProductCreateDto product);
-
     int count();
-
     List<Product> getAll(ProductCriteria criteria);
-
-    Optional<Product> getById(int id);
-
+    Product getById(int id);
     int deleteAll();
     boolean deleteById(int id);
     boolean update(ProductUpdateDto product);

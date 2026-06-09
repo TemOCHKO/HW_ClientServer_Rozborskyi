@@ -100,17 +100,17 @@ public class MySqlProductRepository implements IProductRepository {
     }
 
     @Override
-    public Optional<Product> getById(int id) {
+    public Product getById(int id) {
         try (PreparedStatement ps = connection.prepareStatement("select * from product where id = ?")) {
             ps.setInt(1, id);
 
             try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
-                    return Optional.of(new Product(rs.getInt("id"), rs.getString("product_name"), rs.getDouble("price"), rs.getInt("quantity")));
+                    return new Product(rs.getInt("id"), rs.getString("product_name"), rs.getDouble("price"), rs.getInt("quantity"));
                 }
             }
 
-            return Optional.empty();
+            return null;
         } catch (SQLException e) {
             throw new RuntimeException("Can't get product by id: " + id, e);
         }

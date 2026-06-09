@@ -1,14 +1,17 @@
+/*
 package org.temochko;
 
+import org.temochko.Models.Product;
+
+import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class Storage {
-
-    private ConcurrentHashMap<Integer, AtomicInteger> storage;
+    private ArrayList<Product> storage;
 
     public Storage() {
-        storage = new ConcurrentHashMap<>();
+        storage = new ArrayList<>();
         addStock(2, 500);
     }
 
@@ -44,3 +47,4 @@ public class Storage {
     }
 
 };
+*/

@@ -4,8 +4,12 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.temochko.Message;
+import org.temochko.Models.ProductCriteria;
 import org.temochko.Processor;
-import org.temochko.Storage;
+import org.temochko.Repositories.IProductRepository;
+import org.temochko.Repositories.MySqlProductRepository;
+import org.temochko.Services.IProductService;
+import org.temochko.Services.ProductService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,7 +18,8 @@ import java.util.concurrent.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class ProcessorTest {
-    private Storage storage;
+    private final IProductRepository productRepository = new MySqlProductRepository("jdbc:mysql://localhost:3306/my_db", "root", "root");
+    private IProductService service;
     private BlockingQueue<Message> inputQueue;
     private BlockingQueue<Message> outputQueue;
     private List<Processor> processors;
@@ -22,14 +27,14 @@ public class ProcessorTest {
 
     @BeforeEach
     public void setUp() {
-        storage = new Storage();
+        service = new ProductService(productRepository);
         inputQueue = new LinkedBlockingQueue<>();
         outputQueue = new LinkedBlockingQueue<>();
         processors = new ArrayList<>();
         processorThreads = new ArrayList<>();
 
         for (int i = 0; i < 4; i++) {
-            Processor p = new Processor(inputQueue, outputQueue, storage);
+            Processor p = new Processor(inputQueue, outputQueue, service);
             processors.add(p);
             Thread t = new Thread(p, "Processor " + i);
             processorThreads.add(t);
@@ -87,7 +92,7 @@ public class ProcessorTest {
         executorService.awaitTermination(5, TimeUnit.SECONDS);
 
         int expectedTotal = numberOfThreads * amountToAddPerThread;
-        int actualTotal = storage.getStock(targetProductId);
+        int actualTotal =  service.getAllProducts(new ProductCriteria()).size();
 
         assertEquals(expectedTotal, actualTotal);
         executorService.shutdown();
@@ -96,7 +101,7 @@ public class ProcessorTest {
     @Test
     public void testRemove() throws InterruptedException {
         int productId = 2;
-        storage.addStock(productId, 600);
+        service.addStock(productId, 600);
 
         int threadsCount = 50;
 
@@ -128,14 +133,14 @@ public class ProcessorTest {
 
         Thread.sleep(100);
 
-        assertEquals(0, storage.getStock(productId));
+        assertEquals(0, service.getAllProducts(new ProductCriteria()).size());
         executor.shutdown();
     }
 
     @Test
     public void testGet() throws InterruptedException {
         int targetProductId = 3;
-        storage.addStock(targetProductId, 67);
+        service.addStock(targetProductId, 67);
 
         int threadsCount = 80;
         CountDownLatch startAtTheSameTimeLatch = new CountDownLatch(1);

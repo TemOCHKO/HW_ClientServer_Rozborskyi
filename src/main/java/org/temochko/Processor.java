@@ -1,18 +1,24 @@
 package org.temochko;
 
+import org.temochko.DTOs.ProductCreateDto;
+import org.temochko.Models.Product;
+import org.temochko.Models.ProductCriteria;
+import org.temochko.Services.IProductService;
+
+import java.util.List;
 import java.util.concurrent.BlockingQueue;
 
 public class Processor implements Runnable {
     private final BlockingQueue<Message> decryptedMessageQueue;
     private final BlockingQueue<Message> responseMessageQueue;
-    private Storage storage;
+    private IProductService productService;
 
     private volatile boolean isRunning = true;
 
-    public Processor(BlockingQueue<Message> decryptedMessageQueue, BlockingQueue<Message> responseMessageQueue, Storage storage) {
+    public Processor(BlockingQueue<Message> decryptedMessageQueue, BlockingQueue<Message> responseMessageQueue, IProductService productService) {
         this.decryptedMessageQueue = decryptedMessageQueue;
         this.responseMessageQueue = responseMessageQueue;
-        this.storage = storage;
+        this.productService = productService;
     }
 
     public void stop() {
@@ -44,34 +50,50 @@ public class Processor implements Runnable {
                 switch (commandId) {
                     case 1:
                         if (messageParts.length > 1) {
-                            int prodCount = Integer.parseInt(messageParts[1]);
-                            storage.addStock(idProd, prodCount);
-                            response = "Added prod successfully";
+                            int stockToAdd = Integer.parseInt(messageParts[1]);
+                            productService.addStock(idProd, stockToAdd);
+                            response = "Added prod stock " + stockToAdd + " successfully";
                         } else {
                             response = "There was an error processing the command";
                         }
                         break;
                     case 2:
                         if (messageParts.length > 1) {
-                            int prodCount = Integer.parseInt(messageParts[1]);
-                            var prodCountInStorage = storage.getStock(idProd);
-
-                            if (prodCountInStorage - prodCount < 0) {
-                                response = "There was an error. Cannot remove this much product";
-                                break;
-                            }
-                            storage.removeStock(idProd, prodCount);
-                            response = "Removed successfully";
-                            break;
+                            int stockToDelete = Integer.parseInt(messageParts[1]);
+                            productService.deleteStock(idProd, stockToDelete);
+                            response = "Deleted prod stock " + stockToDelete + " successfully";
+                        } else {
+                            response = "There was an error processing the command";
                         }
                     case 3:
-                        int countOfProduct = storage.getStock(idProd);
-                        if (countOfProduct > 0) {
-                            response = "Stock " + countOfProduct;
+                        List<Product> products = productService.getAllProducts(new ProductCriteria());
+                        int countOfProducts = products.size();
+                        if (countOfProducts > 0) {
+                            response = "Stock " + countOfProducts;
                             break;
                         } else {
                             response = "There was an error";
                         }
+                        break;
+                    case 4:
+                        if (messageParts.length > 1) {
+                            String name = messageParts[1];
+                            double price = Double.parseDouble(messageParts[2]);
+                            int prodCount = Integer.parseInt(messageParts[3]);
+                            productService.createProduct(new ProductCreateDto(name, price, prodCount));
+                            response = "Added prod successfully";
+                        } else {
+                            response = "There was an error processing the command";
+                        }
+                        break;
+                    case 5:
+                        productService.deleteProductById(idProd);
+                        if (!productService.deleteProductById(idProd)) {
+                            response = "There was an error. Cannot remove this much product";
+                            break;
+                        }
+                        response = "Removed successfully";
+                        break;
                     default:
                         break;
                 }
