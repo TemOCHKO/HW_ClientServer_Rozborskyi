@@ -50,12 +50,20 @@ public class MySqlProductRepository implements IProductRepository {
 
     @Override
     public int count() {
-        return 0;
+        try (PreparedStatement ps = connection.prepareStatement("select count(*) from product")) {
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+            return 0;
+        } catch (SQLException e) {
+            throw new RuntimeException("Can't count prods", e);
+        }
     }
 
     @Override
     public List<Product> getAll(ProductCriteria criteria) {
-
         StringBuilder sb = new StringBuilder("select * from product");
         ArrayList<Object> params = new ArrayList<>();
 
