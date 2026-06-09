@@ -1,4 +1,6 @@
-package org.temochko.HW2and3;
+package org.temochko;
+
+import org.temochko.Network.SocketWrapper;
 
 import java.net.Socket;
 import java.util.concurrent.BlockingQueue;
@@ -30,6 +32,8 @@ public class Receiver implements Runnable {
 
     @Override
     public void run() {
+
+
         if (!isRunning) return;
 
         try {

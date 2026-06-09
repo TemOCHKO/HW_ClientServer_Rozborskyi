@@ -1,4 +1,4 @@
-package org.temochko.HW2and3;
+package org.temochko;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;

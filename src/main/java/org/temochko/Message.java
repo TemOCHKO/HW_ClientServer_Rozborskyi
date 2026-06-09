@@ -1,4 +1,4 @@
-package org.temochko.HW1;
+package org.temochko;
 
 public class Message {
 

@@ -2,9 +2,6 @@ package org.temochko;
 
 import org.apache.commons.codec.DecoderException;
 import org.junit.jupiter.api.Test;
-import org.temochko.HW1.Decrypter;
-import org.temochko.HW1.Encrypter;
-import org.temochko.HW1.Message;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;

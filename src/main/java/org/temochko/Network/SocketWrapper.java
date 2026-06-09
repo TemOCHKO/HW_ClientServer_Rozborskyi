@@ -1,4 +1,4 @@
-package org.temochko.HW2and3;
+package org.temochko.Network;
 
 import java.io.DataInputStream;
 import java.io.IOException;

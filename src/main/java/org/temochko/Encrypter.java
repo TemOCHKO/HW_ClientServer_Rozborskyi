@@ -1,4 +1,4 @@
-package org.temochko.HW1;
+package org.temochko;
 
 import javax.crypto.*;
 import javax.crypto.spec.SecretKeySpec;

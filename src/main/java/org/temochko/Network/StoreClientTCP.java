@@ -1,8 +1,8 @@
-package org.temochko.HW2and3;
+package org.temochko.Network;
 
-import org.temochko.HW1.Decrypter;
-import org.temochko.HW1.Encrypter;
-import org.temochko.HW1.Message;
+import org.temochko.Decrypter;
+import org.temochko.Encrypter;
+import org.temochko.Message;
 
 import java.io.DataOutputStream;
 import java.io.IOException;

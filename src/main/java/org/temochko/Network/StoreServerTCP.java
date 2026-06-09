@@ -1,6 +1,6 @@
-package org.temochko.HW2and3;
+package org.temochko.Network;
 
-import org.temochko.HW1.Message;
+import org.temochko.*;
 
 import java.io.IOException;
 import java.net.ServerSocket;

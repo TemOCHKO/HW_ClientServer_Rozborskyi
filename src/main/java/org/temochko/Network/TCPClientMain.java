@@ -1,8 +1,12 @@
-package org.temochko.HW2and3;
-import org.temochko.HW1.Message;
+package org.temochko.Network;
+
+import org.temochko.Message;
+
 import java.util.Random;
 
 public class TCPClientMain {
+    private
+
     public static void main(String[] args) {
         int numberOfSimulatedUsers = 15;
 

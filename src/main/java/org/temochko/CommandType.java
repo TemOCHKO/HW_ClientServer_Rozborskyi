@@ -1,4 +1,4 @@
-package org.temochko.HW2and3;
+package org.temochko;
 
 public enum CommandType {
     AddProduct,

@@ -1,7 +1,4 @@
-package org.temochko.HW2and3;
-
-import org.temochko.HW1.Decrypter;
-import org.temochko.HW1.Message;
+package org.temochko;
 
 import java.util.concurrent.BlockingQueue;
 
