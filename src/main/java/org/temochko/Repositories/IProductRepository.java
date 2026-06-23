@@ -16,4 +16,5 @@ public interface IProductRepository {
     int deleteAll();
     boolean deleteById(int id);
     boolean update(ProductUpdateDto product);
+    boolean nameExists(String name);
 }

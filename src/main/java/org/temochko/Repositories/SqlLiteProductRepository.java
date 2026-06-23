@@ -146,6 +146,26 @@ public class SqlLiteProductRepository implements IProductRepository {
         }
     }
 
+    @Override
+    public boolean nameExists(String name) {
+        String sql = "SELECT count(*) FROM product WHERE LOWER(product_name) = LOWER(?)";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setString(1, name);
+
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    int count = rs.getInt(1);
+                    return count > 0;
+                }
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Can't check if product name exists: " + name, e);
+        }
+
+        return false;
+    }
+
     private void init() {
         try (Statement statement = connection.createStatement()) {
             statement.execute("""

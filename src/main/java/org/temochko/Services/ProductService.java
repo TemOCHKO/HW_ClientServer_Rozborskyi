@@ -87,4 +87,9 @@ public class ProductService implements IProductService {
 
         return productRepository.update(new ProductUpdateDto(idProd, prod.getName(), prod.getPrice(), prod.getQuantity() + stock));
     }
+
+    @Override
+    public boolean nameExists(String name) {
+        return productRepository.nameExists(name);
+    }
 }
